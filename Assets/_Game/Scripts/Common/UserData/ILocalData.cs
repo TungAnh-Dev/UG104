@@ -1,9 +1,6 @@
-namespace CasualGameArchitecture.Scripts.UserData
+public interface ILocalData
 {
-    public interface ILocalData
-    {
-        void Init();
+    void Init();
 
-        void OnDataLoaded();
-    }
+    void OnDataLoaded();
 }

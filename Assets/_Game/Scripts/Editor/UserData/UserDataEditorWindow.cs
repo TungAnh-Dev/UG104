@@ -11,7 +11,6 @@ namespace CasualGameArchitecture.Editor
     using UnityEditor;
     using UnityEngine;
     using CasualGameArchitecture.Scripts.Utilities.Extension;
-    using CasualGameArchitecture.Scripts.UserData;
 
     [Obsolete("Obsolete")]
     public class UserDataEditorWindow : OdinEditorWindow
