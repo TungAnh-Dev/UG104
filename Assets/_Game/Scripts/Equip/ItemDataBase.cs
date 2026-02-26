@@ -21,4 +21,11 @@ using UnityEngine;
         Epic,
         Legendary
     }
+    public enum ItemCategory
+    {
+        Equipment,
+        Consumable,
+
+}
+
 
