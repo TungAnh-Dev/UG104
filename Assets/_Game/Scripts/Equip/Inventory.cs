@@ -24,7 +24,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public bool AddItem(ItemConfig item, int amount = 1)
+    public bool AddItem(ItemBase item, int amount = 1)
     {
         
         foreach (var slot in slots)
@@ -48,7 +48,7 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-    public void RemoveItem(ItemConfig item, int amount = 1)
+    public void RemoveItem(ItemBase item, int amount = 1)
     {
         foreach (var slot in slots)
         {

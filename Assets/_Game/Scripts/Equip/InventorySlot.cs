@@ -4,12 +4,12 @@ using UnityEngine;
 [System.Serializable]
 public class InventorySlot
 {
-    public ItemConfig item;
+    public ItemBase item;
     public int amount;
 
     public bool IsEmpty => item == null;
 
-    public void SetItem(ItemConfig newItem, int newAmount)
+    public void SetItem(ItemBase newItem, int newAmount)
     {
         item = newItem;
         amount = newAmount;
