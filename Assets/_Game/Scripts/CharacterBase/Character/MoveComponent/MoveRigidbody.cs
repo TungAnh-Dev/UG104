@@ -1,29 +1,38 @@
 ﻿using UnityEngine;
 
-public class MoveRigidbody : IFMove
+public class MoveRigidbody : MonoBehaviour, IMove
 {
-    private Rigidbody rigidbody;
+    private Rigidbody rb;
 
+    private StatsComponent stats;
 
+    private Vector3 moveDirection;
+    private bool isMoving;
     //Hàm khởi tạo MoveRigidbody
-    public MoveRigidbody(Rigidbody rigidbody, StatsComponent statsComponent)
+    private void Awake()
     {
-        this.rigidbody = rigidbody;
+        rb = GetComponent<Rigidbody>();
+        stats = GetComponent<StatsComponent>();
     }
-    public void MoveTo(Vector3 inputDirection, float moveSpeed)
-    {
-        
-        Vector3 velocity = inputDirection.normalized * moveSpeed;
-        rigidbody.linearVelocity = new Vector3(
-            velocity.x,
-            rigidbody.linearVelocity.y,
-            // góc nhìn topdown nên giữ nguyên vận tốc y
 
-            velocity.z);
+    public void MoveTo(Vector3 direction)
+    {
+        moveDirection = direction.normalized;
+        isMoving = true;
     }
 
     public void Stop()
     {
-        rigidbody.linearVelocity = Vector3.zero;
+        isMoving = false;
+        rb.linearVelocity = Vector3.zero;
+    }
+
+    private void Update()
+    {
+        if (!isMoving) return;
+        //Lấy moveSpeed runtime từ stats
+        float moveSpeed = stats.GetStat(StatsType.MoveSpeed);
+
+        rb.linearVelocity = moveDirection * moveSpeed;
     }
 }
