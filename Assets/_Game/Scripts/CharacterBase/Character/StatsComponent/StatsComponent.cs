@@ -3,47 +3,60 @@ using UnityEngine;
 
 public class StatsComponent : MonoBehaviour
 {
-    //Lấy các thuộc tính đưa vào Dictionary
-    private Dictionary<StatsType, float> BaseStats = new Dictionary<StatsType, float>();
-    //Thêm các modifier vào List
-    private List<StatsModifier> Modifiers = new List<StatsModifier>();
+    [Header("Stats Data")]
+    [SerializeField]
+    private CharacterStatsData data;
 
-    //Hàm setup giá trị cho các thuộc tính cơ bản
-    public void SetBaseStats(StatsType statType, float value)
+    //BaseStat lay tu SO
+    private Dictionary<StatsType, float> baseStats = new Dictionary<StatsType, float>();
+    // Modifier runtime
+    private List<StatsModifier> modifiersList = new List<StatsModifier>();
+    private void Awake()
     {
-        BaseStats[statType] = value;
+        InitBaseStats();
     }
-    // Hàm thêm modifier vào List
+
+    private void InitBaseStats()
+    {
+        if(data == null)
+        {
+            Debug.LogWarning($"{gameObject.name} chua gan Data");
+        }
+        baseStats = data.GetBaseStats();
+    }
+    //Modifier
     public void AddModifier(StatsModifier modifier)
     {
-        Modifiers.Add(modifier);
+        modifiersList.Add(modifier);
     }
-    //Hàm remove modifier khỏi List
     public void RemoveModifier(StatsModifier modifier)
     {
-        Modifiers.Remove(modifier);
+        modifiersList.Remove(modifier);
     }
-    //Hàm trả về giá trị cuối cùng của thuộc tính
-    public float GetStat(StatsType statType)
+    public float CalculateFinalStat(StatsType statType, float baseValue)
     {
-        //Lấy giá  trị cơ bản của thuộc tính
-        //Nếu thuộc tính không có trong Dict thì trả về 0
-        float baseValue = BaseStats.ContainsKey(statType) ? BaseStats[statType] : 0f;
-        float flat = 0f;
-        float percent = 0f;
-        foreach (var modifier in Modifiers)
+        float flatBonus = 0f;
+        float percentBonus = 0f;
+
+        foreach (var modifier in modifiersList)
         {
-            if (modifier.StatType != statType) continue;
+            if (modifier.StatType != statType)
+                continue;
 
             if (modifier.Type == ModifierType.Flat)
-            {
-                flat = flat + modifier.Value;
-            }
+                flatBonus += modifier.Value;
+
             if (modifier.Type == ModifierType.Percent)
-            {
-                percent = percent + modifier.Value;
-            }
+                percentBonus += modifier.Value;
         }
-        return (baseValue + flat) * (1 + percent);
+
+        float finalValue = (baseValue + flatBonus) * (1 + percentBonus);
+        return Mathf.Max(0,finalValue);
+    }
+    //GetStat
+    public float GetStat(StatsType statType)
+    {
+        float baseValue = baseStats.TryGetValue(statType, out float value) ? value : 0f;
+        return CalculateFinalStat(statType, baseValue);
     }
 }

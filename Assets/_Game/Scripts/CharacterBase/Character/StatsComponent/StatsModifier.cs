@@ -16,4 +16,15 @@ public class StatsModifier
         Value = value;
         Type = type;
     }
+
+    //Cho phep thay doi value thong qua ham;
+    public void AddValue(float value)
+    {
+        Value += value;
+    }
+
+    public void SetValue(float value)
+    {
+        Value = value;
+    }
 }
