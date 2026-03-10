@@ -10,6 +10,9 @@ public abstract class CharacterBase : MonoBehaviour
     protected HealthComponent healthComponent;
     protected StatsComponent statsComponent;
     protected MoveComponent moveComponent;
+    protected AttackComponent attackComponent;
+    protected TargetSelector targetSelector;
+    
 
     //Set các component bởi Awake
     private void Awake()
@@ -22,5 +25,8 @@ public abstract class CharacterBase : MonoBehaviour
         healthComponent = GetComponent<HealthComponent>();
         statsComponent = GetComponent<StatsComponent>();
         moveComponent = GetComponent<MoveComponent>();
+        attackComponent = GetComponent<AttackComponent>();
+        targetSelector = GetComponent<TargetSelector>();
+        
     }
 }

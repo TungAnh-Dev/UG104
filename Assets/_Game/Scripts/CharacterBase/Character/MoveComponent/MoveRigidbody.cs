@@ -17,6 +17,7 @@ public class MoveRigidbody : MonoBehaviour, IMove
 
     public void MoveTo(Vector3 direction)
     {
+        
         moveDirection = direction.normalized;
         isMoving = true;
     }

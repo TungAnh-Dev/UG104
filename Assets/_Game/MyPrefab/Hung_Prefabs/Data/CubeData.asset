@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55290c9827e5e8b4bb33ab47a90d69fb, type: 3}
   m_Name: CubeData
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStatsData
-  baseStats: []
+  baseStats:
+  - statType: 0
+    value: 100

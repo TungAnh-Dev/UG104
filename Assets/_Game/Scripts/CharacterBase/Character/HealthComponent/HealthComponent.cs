@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class HealthComponent : MonoBehaviour
+public class HealthComponent : MonoBehaviour, IAttackable
 {
     // Lấy stats HP từ StatsComponent
     private StatsComponent statsComponent;
@@ -20,6 +20,10 @@ public class HealthComponent : MonoBehaviour
         }
        
     }
+    public Transform GetTransform()
+    {
+        return transform;
+    }
     //Hàm get giá trị HP từ StatsComponent
     public float GetMaxHP()
     {
@@ -28,11 +32,18 @@ public class HealthComponent : MonoBehaviour
     // Hàm nhân vật nhận sát thương
     public void TakeDamage(float damage)
     {
-        CurrentHP = CurrentHP - damage;
-        //Set giá trị Hp hiện tại không được nhỏ hơn 0
-        // và lớn hơn giá trị MaxHP
-        CurrentHP = Mathf.Clamp(CurrentHP, 0, GetMaxHP());
-        if(CurrentHP <= 0)
+        if (CurrentHP <= 0) return;
+
+        damage = Mathf.Max(0, damage);
+
+        //Khi nhân vật nhận damage
+        CurrentHP -= damage;
+        //Hp sẽ được giới hạn 
+        CurrentHP = Mathf.Clamp(CurrentHP, 0,GetMaxHP());
+
+        Debug.Log($"{gameObject.name} còn {CurrentHP}/{GetMaxHP()} HP");
+
+        if (CurrentHP == 0) 
         {
             Die();
         }
@@ -40,14 +51,12 @@ public class HealthComponent : MonoBehaviour
     // Hàm nhân vật có hồi máu
     public void Heal(float healValue)
     {
-        CurrentHP = CurrentHP + healValue;
-        //Set giá trị Hp hiện tại không được nhỏ hơn 0
-        // và lớn hơn giá trị MaxHP
-        CurrentHP = Mathf.Clamp(CurrentHP, 0, GetMaxHP());
+        
     }
     // Hàm nhân vật chết
     public void Die()
     {
-        Debug.Log("Character is dead");
+        Debug.Log($"{gameObject.name} + died");
+        Destroy(gameObject);
     }
 }
