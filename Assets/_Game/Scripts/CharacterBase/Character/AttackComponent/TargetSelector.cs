@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 public class TargetSelector : MonoBehaviour
 {
     //Set layer cua target duoc chon
@@ -21,6 +22,8 @@ public class TargetSelector : MonoBehaviour
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
+            if (EventSystem.current.IsPointerOverGameObject())
+                return;
             HandleSelect();
         }
     }

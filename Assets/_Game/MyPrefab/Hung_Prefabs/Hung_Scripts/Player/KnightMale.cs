@@ -5,6 +5,9 @@ public class KnightMale : CharacterBase
 {
     private ModifierController modifierController;
     private StatsModifier speedbuff;
+    private AnimationComponent animationComponent;
+
+
     public override void Init()
     {
             base.Init();
@@ -13,6 +16,7 @@ public class KnightMale : CharacterBase
     private void Start()
     {
         modifierController = GetComponent<ModifierController>();
+        animationComponent = GetComponent<AnimationComponent>();
 
         speedbuff = new StatsModifier(
             StatsType.MoveSpeed,
@@ -25,6 +29,7 @@ public class KnightMale : CharacterBase
         HandleMovement();
         HandleModifier();
     }
+
     public void HandleModifier()
     {
         if (Keyboard.current.pKey.wasPressedThisFrame)
@@ -55,8 +60,21 @@ public class KnightMale : CharacterBase
             direction += Vector3.right;
 
         if (direction != Vector3.zero)
+        {
             moveComponent.MoveTo(direction.normalized);
+            animationComponent.SetRun();
+            //Xoay theo huong di chuyen
+
+            transform.rotation = Quaternion.LookRotation(direction);
+
+        }
         else
+        {
             moveComponent.Stop();
+            animationComponent.SetIdle();
+
+        }
     }
+
+    
 }
