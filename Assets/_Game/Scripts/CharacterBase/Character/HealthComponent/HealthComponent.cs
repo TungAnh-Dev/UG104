@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class HealthComponent : MonoBehaviour, IAttackable
+public class HealthComponent : MonoBehaviour
 {
     // Lấy stats HP từ StatsComponent
     private StatsComponent statsComponent;

@@ -34,6 +34,6 @@ public class MoveRigidbody : MonoBehaviour, IMove
         //Lấy moveSpeed runtime từ stats
         float moveSpeed = stats.GetStat(StatsType.MoveSpeed);
 
-        rb.linearVelocity = moveDirection * moveSpeed;
+        rb.linearVelocity = moveDirection * moveSpeed ;
     }
 }
