@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 public class FemaleKnight : CharacterBase
 {
     private AnimationComponent animationComponent;
+    private SkillSystem skillSystem;
     public override void Init()
     {
         base.Init();
@@ -11,6 +12,7 @@ public class FemaleKnight : CharacterBase
     public void Start()
     {
         animationComponent = GetComponent<AnimationComponent>();
+        skillSystem = GetComponent<SkillSystem>();
     }
 
     public void Update()
@@ -47,4 +49,6 @@ public class FemaleKnight : CharacterBase
             animationComponent.PlayIdle();
         }
     }
+
+    
 }
