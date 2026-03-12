@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System.Collections;
 public class HealthComponent : MonoBehaviour
 {
     // Lấy stats HP từ StatsComponent
@@ -7,9 +7,12 @@ public class HealthComponent : MonoBehaviour
     // Biến lưu trữ HP hiện tại
     public float CurrentHP { get; private set; }
 
+    private TargetComponent targetComponent;
+
     private void Awake()
     {
         statsComponent = GetComponent<StatsComponent>();
+        targetComponent = GetComponent<TargetComponent>();
     }
     //Hàm khởi tạo giá trị HP hiện tại 
     private void Start()
@@ -43,10 +46,20 @@ public class HealthComponent : MonoBehaviour
 
         Debug.Log($"{gameObject.name} còn {CurrentHP}/{GetMaxHP()} HP");
 
+        StartCoroutine(HitEffect());
+
         if (CurrentHP == 0) 
         {
             Die();
         }
+    }
+    private IEnumerator HitEffect()
+    {
+        targetComponent.OnSelected(); // đỏ
+
+        yield return new WaitForSeconds(0.5f);
+
+        targetComponent.OnDeselected(); // về màu cũ
     }
     // Hàm nhân vật có hồi máu
     public void Heal(float healValue)

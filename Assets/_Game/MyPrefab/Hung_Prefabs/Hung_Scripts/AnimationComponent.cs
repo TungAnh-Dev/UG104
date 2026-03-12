@@ -17,4 +17,9 @@ public class AnimationComponent : MonoBehaviour
     {
         animator.SetBool("Run", false);
     }
+
+    public void PlayTrigger(string animationTrigger) 
+    {
+        animator.SetTrigger(animationTrigger);
+    }
 }
