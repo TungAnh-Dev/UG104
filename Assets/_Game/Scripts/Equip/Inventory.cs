@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private int slotCount = 20;
+    [SerializeField] private int slotCount = 50;
     [SerializeField] private List<InventorySlot> slots = new List<InventorySlot>();
 
     public IReadOnlyList<InventorySlot> Slots => slots;
