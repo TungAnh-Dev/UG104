@@ -8,6 +8,8 @@ public abstract class ItemBase : ScriptableObject
     public ItemCategory Category;
     public Rarity Rarity;
     public Sprite Icon;
+    public int maxStack = 99;
+    public string Description;
 
     public List<StatEntry> Stats;
 
