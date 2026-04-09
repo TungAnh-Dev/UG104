@@ -1,25 +1,20 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 public class InputManager :  MonoBehaviour
 {
     [SerializeField] private GameObject inventoryPanel;
+    [SerializeField] private Button inventoryBtn;
 
-    private bool isInventoryOpen = false;
-    private void Start()
+    public void InventoryOpen()
     {
-        inventoryPanel.SetActive(isInventoryOpen);
+        inventoryPanel.SetActive(true);
+        inventoryBtn.gameObject.SetActive(false);
     }
-    private void Update()
+    public void InventoryClose()
     {
-        if (Keyboard.current.bKey.wasPressedThisFrame)
-        {
-            InventoryOpen();
-        }
-    }
+        inventoryPanel.SetActive(false);
+        inventoryBtn.gameObject.SetActive(true);
 
-    private void InventoryOpen()
-    {
-        isInventoryOpen = !isInventoryOpen;
-        inventoryPanel.SetActive(isInventoryOpen);
     }
 }

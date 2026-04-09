@@ -62,3 +62,8 @@ public class Inventory : MonoBehaviour
 
     
 }
+public enum SlotType
+{
+    Equipment,
+    Inventory
+}

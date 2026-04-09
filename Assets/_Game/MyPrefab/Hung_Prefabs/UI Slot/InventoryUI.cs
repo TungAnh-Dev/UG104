@@ -1,25 +1,45 @@
+﻿using Unity.VisualScripting;
 using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
-    [SerializeField] private Inventory inventory;
-    [SerializeField] private InventorySlotUI slotPrefab;
-    [SerializeField] private Transform slotParent;
+    public static InventoryUI Instance;
+
+    [SerializeField] private Inventory_2 inventory;
+    [SerializeField] private GameObject slotPrefab;
+    [SerializeField] private Transform inventoryArea;
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
-        DrawInventory();
+        CreateSlots();
+        RefreshUI();
     }
 
-    public void DrawInventory()
+    void CreateSlots()
     {
-        foreach (Transform child in slotParent)
-            Destroy(child.gameObject);
-
-        foreach (var slot in inventory.Slots)
+        for (int i = 0; i < inventory.GetSlotCount(); i++)
         {
-            InventorySlotUI newSlot = Instantiate(slotPrefab, slotParent);
-            newSlot.SetSlot(slot);
+            GameObject slotObj = Instantiate(slotPrefab, inventoryArea);
+            slotObj.name = $"Slot_{i + 1}";
+
+            // Thiết lập slot là Inventory mode
+            SlotUI slotUI = slotObj.GetComponent<SlotUI>();
+            slotUI.SetSlotInventory();
+        }
+    }
+
+    public void RefreshUI()
+    {
+        for (int i = 0; i < inventory.GetSlotCount(); i++)
+        {
+            Slot dataSlot = inventory.GetSlot(i);
+            SlotUI slotUI = inventoryArea.GetChild(i).GetComponent<SlotUI>();
+
+            slotUI.UpdateInventorySlot(dataSlot);
         }
     }
 }
