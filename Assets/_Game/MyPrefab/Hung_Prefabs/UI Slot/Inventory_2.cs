@@ -4,8 +4,9 @@ using UnityEngine;
 public class Inventory_2 : MonoBehaviour
 {
     public static Inventory_2 Instance;
+
     [Header("Starting Items")]
-    [SerializeField] private List<ItemBase> startingItems;
+    [SerializeField] private string[] startingItemIDs;
 
     [Header("Runtime Slots")]
     public List<Slot> slots = new List<Slot>();
@@ -14,88 +15,120 @@ public class Inventory_2 : MonoBehaviour
 
     private void Awake()
     {
-        InitInventory();
+        Instance = this;
     }
 
+    private void Start()
+    {
+        InitInventory();
+    }
     void InitInventory()
     {
         slots.Clear();
 
-        // Tạo slot rỗng trước
         for (int i = 0; i < maxSlots; i++)
         {
             slots.Add(new Slot());
         }
 
-        //Thêm 5 item đầu tiên vào inventory
-        foreach (var item in startingItems)
-        {
-            AddItem(item, 1); // mỗi item 1 cái
-        }
+        LoadStartingItems();
+
+        RefreshUI();
     }
 
-    public int GetSlotCount()
+    void LoadStartingItems()
+    {
+        if (startingItemIDs == null) return;
+
+        foreach (string id in startingItemIDs)
+        {
+            AddItem(id, 1);
+        }
+    }
+    public Slot GetSlot(int index)
+    {
+        if (index < 0 || index >= slots.Count)
+            return null;
+
+        return slots[index];
+    }
+
+    public int GetSlotCount() 
     {
         return slots.Count;
     }
 
-    public Slot GetSlot(int index)
+    public void AddItem(string itemID, int amount)
     {
-        return slots[index];
-    }
+        if (string.IsNullOrEmpty(itemID) || amount <= 0)
+            return;
 
-    // Thêm item (stack nếu có, nếu không thì tìm slot trống)
-    public bool AddItem(ItemBase item, int amount)
-    {
-        // 🧪 Nếu là Consumable → được stack
-        if (item.Category == ItemCategory.Consumable)
+        ItemBase item = ItemDatabase.Instance.GetItemByID(itemID);
+
+        if (item == null)
         {
-            foreach (var slot in slots)
+            Debug.LogWarning($"Item not found: {itemID}");
+            return;
+        }
+        // EQUIPMENT (NO STACK)
+        if (item.Category == ItemCategory.Equipment)
+        {
+            for (int i = 0; i < slots.Count; i++)
             {
-                if (!slot.IsEmpty && slot.item == item)
+                if (slots[i].IsEmpty)
                 {
-                    int spaceLeft = item.maxStack - slot.amount;
-
-                    if (spaceLeft > 0)
-                    {
-                        int addAmount = Mathf.Min(spaceLeft, amount);
-                        slot.AddAmount(addAmount);
-
-                        return true;
-                    }
+                    slots[i].SetItem(itemID, 1);
+                    RefreshUI();
+                    return;
                 }
             }
+
+            Debug.Log("Inventory full (equipment)");
+            return;
         }
-
-        // 🪖 Equipment hoặc không stack được → mỗi slot 1 cái
-        foreach (var slot in slots)
+        // CONSUMABLE (STACK FIRST)
+        for (int i = 0; i < slots.Count; i++)
         {
-            if (slot.IsEmpty)
+            if (!slots[i].IsEmpty && slots[i].itemID == itemID)
             {
-                int addAmount = item.Category == ItemCategory.Equipment ? 1 : amount;
-                slot.SetItem(item, addAmount);
-
-                return true;
+                slots[i].AddAmount(amount);
+                RefreshUI();
+                return;
+            }
+        }
+        // EMPTY SLOT
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (slots[i].IsEmpty)
+            {
+                slots[i].SetItem(itemID, amount);
+                RefreshUI();
+                return;
             }
         }
 
-        return false;
+        Debug.Log("Inventory full!");
     }
-    public void RemoveItem(ItemBase item, int amount)
+    //Ham xoa item khoi inventory
+    public void RemoveItem(string itemID, int amount)
     {
-        foreach (var slot in slots)
+        for (int i = 0; i < slots.Count; i++)
         {
-            if (slot.item == item)
+            if (slots[i].itemID == itemID)
             {
-                slot.amount -= amount;
+                slots[i].AddAmount(-amount);
 
-                if (slot.amount <= 0)
-                    slot.Clear();
+                if (slots[i].amount <= 0)
+                    slots[i].Clear();
 
-                break;
+                RefreshUI();
+                return;
             }
         }
-
-        InventoryUI.Instance.RefreshUI();
+    }
+    //Cap nhat lai giao dien sau khi thay doi inventory
+    public void RefreshUI()
+    {
+        InventoryUI.Instance?.RefreshUI();
     }
 }

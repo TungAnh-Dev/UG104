@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 148c32faf8850d342acc7218987cc3cf, type: 3}
-  m_Name: Sword
+  m_Name: 0_epic_sword
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentItem
-  ID: 0
-  ItemName: sword
+  ID: 0_epic_sword
+  ItemName: Epic Sword
   Category: 0
-  Rarity: 0
+  Rarity: 3
   Icon: {fileID: 21300000, guid: 5fd50594014b70e48bd6993443d46b32, type: 3}
   maxStack: 99
   Description: 
+  itemPrefab: {fileID: 194264, guid: c28a7210748b29440b72e9707e5260b9, type: 3}
   Stats:
   - statType: 0
-    value: 200
+    value: 1000
   EquipType: 0

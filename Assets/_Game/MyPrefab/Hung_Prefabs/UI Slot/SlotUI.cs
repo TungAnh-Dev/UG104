@@ -1,31 +1,58 @@
 ﻿using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class SlotUI : MonoBehaviour, IPointerClickHandler
 {
+    [Header("UI")]
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI amountText;
     [SerializeField] private TextMeshProUGUI contentText;
     [SerializeField] private GameObject highlight;
 
     private static SlotUI currentSelected;
-    private Slot currentData; // 
-    private ItemBase equipmentItem;
 
+    private Slot currentSlot;
+    private ItemBase currentItem;
+    private int amount;
     private SlotUIType mode;
     private ItemType equipmentType;
 
-    //Thiết lập slot cho Inventory
+    // =========================
+    // INVENTORY INIT
+    // =========================
     public void SetSlotInventory()
     {
         mode = SlotUIType.Inventory;
         ClearSlot();
-        
     }
 
-    //Thiết lập slot cho Equipment
+    public void UpdateInventorySlot(Slot slot)
+    {
+        if (mode != SlotUIType.Inventory) return;
+
+        currentSlot = slot;
+
+        if (slot == null || slot.IsEmpty)
+        {
+            ClearSlot();
+            return;
+        }
+
+        ItemBase item = ItemDatabase.Instance.GetItemByID(slot.itemID);
+        if (item == null)
+        {
+            ClearSlot();
+            return;
+        }
+
+        SetItem(item, slot.amount, SlotUIType.Inventory);
+    }
+
+    // =========================
+    // EQUIPMENT INIT
+    // =========================
     public void SetSlotEquipment(ItemType type)
     {
         mode = SlotUIType.Equipment;
@@ -35,61 +62,71 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
 
         contentText.gameObject.SetActive(true);
         contentText.text = type.ToString();
-        contentText.color = Color.black;
     }
-    
-    public void UpdateInventorySlot(Slot slot)
+
+    public void SetEquipmentItem(ItemBase item)
     {
-        if(mode != SlotUIType.Inventory) return;
+        if (mode != SlotUIType.Equipment) return;
 
-        currentData = slot;
+        if (item == null)
+        {
+            ClearSlot();
+            SetSlotEquipment(equipmentType);
+            return;
+        }
 
-        if (slot.IsEmpty)
+        SetItem(item, 1, SlotUIType.Equipment);
+    }
+
+    // =========================
+    // CORE SET ITEM (CHUNG)
+    // =========================
+    public void SetItem(ItemBase item, int amount, SlotUIType type)
+    {
+        currentItem = item;
+        this.amount = amount;
+        mode = type;
+
+        if (item == null)
         {
             ClearSlot();
             return;
         }
 
-        icon.enabled = true;
-        icon.sprite = slot.item.Icon;
-
-        if(slot.item.Category == ItemCategory.Consumable && slot.amount > 1)
-        {
-            amountText.gameObject.SetActive(true);
-            amountText.text = slot.amount.ToString();
-        }
-        else
-        {
-            amountText.gameObject.SetActive(false);
-        }
-
-       
-    }
-
-    public void SetEquipmentItem(ItemBase item)
-    {
-        if(mode != SlotUIType.Equipment) return;
-        if (item == null)
-        {
-            SetSlotEquipment(equipmentType);
-            return;
-        }
-        icon.enabled = true;
         icon.sprite = item.Icon;
+        icon.enabled = true;
 
-        contentText.gameObject.SetActive(true);
-        amountText.gameObject.SetActive(false);
-    }
+        amountText.gameObject.SetActive(amount > 1);
+        amountText.text = amount.ToString();
 
-    //Clear slot (dùng cho cả Inventory và Equipment)
-    public void ClearSlot()
-    {
-        icon.sprite = null;
-        icon.enabled = false;
-        amountText.gameObject.SetActive(false);
         contentText.gameObject.SetActive(false);
     }
 
+    // =========================
+    // CLEAR
+    // =========================
+    public void ClearSlot()
+    {
+        currentItem = null;
+        currentSlot = null;
+        amount = 0;
+
+        if (icon != null)
+        {
+            icon.sprite = null;
+            icon.enabled = false;
+        }
+
+        if (amountText != null)
+            amountText.gameObject.SetActive(false);
+
+        if (contentText != null && mode == SlotUIType.Inventory)
+            contentText.gameObject.SetActive(false);
+    }
+
+    // =========================
+    // CLICK
+    // =========================
     public void OnPointerClick(PointerEventData eventData)
     {
         Select();
@@ -97,31 +134,26 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
 
     void Select()
     {
-        // Tắt highlight slot cũ
         if (currentSelected != null)
             currentSelected.highlight.SetActive(false);
 
         currentSelected = this;
-        highlight.SetActive(true);
-        if (mode == SlotUIType.Inventory)
+
+        if (highlight != null)
+            highlight.SetActive(true);
+
+        if (currentItem == null)
         {
-            if (currentData != null && !currentData.IsEmpty)
-                InfoItemUI.Instance.ShowInfo(currentData.item, currentData.amount, mode);
-            else
-                InfoItemUI.Instance.Clear();
+            InfoItemUI.Instance.Clear();
+            return;
         }
-        else if (mode == SlotUIType.Equipment)
-        {
-            if (equipmentItem != null)
-                InfoItemUI.Instance.ShowInfo(equipmentItem, 1, mode);
-            else
-                InfoItemUI.Instance.Clear();
-        }
+
+        InfoItemUI.Instance.ShowInfo(
+            currentItem,
+            amount,
+            mode,
+            currentSlot
+        );
     }
 }
-
-public enum SlotUIType
-{
-    Inventory,
-    Equipment
-}
+public enum SlotUIType { Inventory, Equipment }

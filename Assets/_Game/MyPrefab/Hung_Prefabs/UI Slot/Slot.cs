@@ -1,22 +1,23 @@
+
 using UnityEngine;
 
 [System.Serializable]
 public class Slot
 {
-    public ItemBase item;
+    public string itemID;
     public int amount;
 
-    public bool IsEmpty => item == null;
+    public bool IsEmpty => string.IsNullOrEmpty(itemID);
 
-    public void SetItem(ItemBase newItem, int newAmount)
+    public void SetItem(string newItemID, int newAmount)
     {
-        item = newItem;
+        itemID = newItemID;
         amount = newAmount;
     }
 
     public void Clear()
     {
-        item = null;
+        itemID = null;
         amount = 0;
     }
 

@@ -14,12 +14,13 @@ public class InfoItemUI : MonoBehaviour
 
     private ItemBase currentItem;
     private SlotUIType currentLocation;
+    private Slot currentSlot;
     private void Awake()
     {
         Instance = this;
         Clear();
     }
-    public void ShowInfo(ItemBase item, int amount, SlotUIType location)
+    public void ShowInfo(ItemBase item, int amount, SlotUIType location, Slot slot)
     {
         if (item == null)
         {
@@ -28,11 +29,12 @@ public class InfoItemUI : MonoBehaviour
         }
         currentItem = item;
         currentLocation = location;
+        currentSlot = slot;
 
         string rarityColor = GetColorByRarity(item.Rarity);
 
         infoItemText.text =
-        $"<size=120%><color={rarityColor}><b>{item.name}</b></color></size>\n" +
+        $"<size=120%><color={rarityColor}><b>{item.ItemName}</b></color></size>\n" +
         $"<color=grey>Type:</color> <color={rarityColor}>{item.Category}</color>\n" +
         $"<color=grey>Rarity:</color> <color={rarityColor}>{item.Rarity}</color>\n" +
         $"<color=grey>Amount:</color> {amount}\n\n" +
@@ -53,11 +55,17 @@ public class InfoItemUI : MonoBehaviour
     public void SetupButton()
     {
         actionButton.onClick.RemoveAllListeners();
-
-        // Nếu không phải equipment thì ẩn button
-        if (currentItem.Category != ItemCategory.Equipment)
+        if(currentItem == null)
         {
             actionButton.gameObject.SetActive(false);
+            return;
+        }
+        // Nếu không phải equipment thì ẩn button
+        if (currentItem.Category == ItemCategory.Consumable)
+        {
+            actionButton.gameObject.SetActive(true);
+            actionButtonText.text = "Use";
+            actionButton.onClick.AddListener(OnClickUse);
             return;
         }
 
@@ -76,24 +84,45 @@ public class InfoItemUI : MonoBehaviour
     }
     private void OnClickEquip()
     {
-        Debug.Log("Equip: " + currentItem.name);
-
-        
-
+        Debug.Log("Equip: " + currentItem.ID);
+        EquipmentManager_2.Instance.Equip(currentSlot);
         Clear();
     }
 
     private void OnClickUnequip()
     {
-        Debug.Log("Unequip: " + currentItem.name);
+        if (currentItem == null)
+            return;
+        // chỉ unequip nếu đang ở equipment
+        if (currentLocation != SlotUIType.Equipment)
+            return;
+        EquipmentItem equipItem = currentItem as EquipmentItem;
+        if (equipItem == null) return;
 
-        
+        EquipmentManager_2.Instance.Unequip(equipItem.EquipType);
 
+        Clear();
+
+    }
+    private void OnClickUse()
+    {
+        if (currentItem == null)
+            return;
+        if (currentItem.Category != ItemCategory.Consumable)
+            return;
+        Debug.Log("Use: " + currentItem.ID);
+        Inventory_2.Instance.RemoveItem(currentItem.ID, 1);
         Clear();
     }
     public void Clear()
     {
+        currentItem = null;
+        currentSlot = null;
+
         infoItemText.text = "";
+
+        actionButton.onClick.RemoveAllListeners();
+        actionButton.gameObject.SetActive(false);
     }
     private string GetColorByRarity(Rarity rarity)
     {
