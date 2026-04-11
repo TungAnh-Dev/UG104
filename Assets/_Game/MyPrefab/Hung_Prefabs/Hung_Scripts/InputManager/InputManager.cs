@@ -6,6 +6,10 @@ public class InputManager :  MonoBehaviour
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private Button inventoryBtn;
 
+    private void Start()
+    {
+        inventoryPanel.SetActive(false);
+    }
     public void InventoryOpen()
     {
         inventoryPanel.SetActive(true);
@@ -15,6 +19,5 @@ public class InputManager :  MonoBehaviour
     {
         inventoryPanel.SetActive(false);
         inventoryBtn.gameObject.SetActive(true);
-
     }
 }

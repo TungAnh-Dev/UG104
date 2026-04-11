@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,15 +14,12 @@ public class EquipmentUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-    }
-    private void Start()
-    {
+        //Khởi tạo các slot cho từng loại trang bị
         foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
         {
             CreateEquipmentSlot(type);
         }
     }
-
     private void CreateEquipmentSlot(ItemType type)
     {
         GameObject slot = Instantiate(slotPrefab, equipmentArea);
@@ -42,8 +39,12 @@ public class EquipmentUI : MonoBehaviour
         SlotUI slotUI = slotDictionary[type];
 
         if (item == null)
-            slotUI.ClearSlot();
+        {
+            slotUI.SetEquipmentItem(null);
+        }
         else
+        {
             slotUI.SetEquipmentItem(item);
+        }
     }
 }

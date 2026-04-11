@@ -1,12 +1,19 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 public class FemaleKnight : CharacterBase
 {
+    public static FemaleKnight Instance;
     private AnimationComponent animationComponent;
     private SkillSystem skillSystem;
+
+    [SerializeField] private Transform weaponPoint;
+
+    private GameObject currentWeapon;
+
     public override void Init()
     {
         base.Init();
+        Instance = this;
     }
 
     public void Start()
@@ -50,5 +57,26 @@ public class FemaleKnight : CharacterBase
         }
     }
 
-    
+    public void HandleEquipment(GameObject equipPrefab)
+    {
+        Debug.Log("Handling equipment change..." + equipPrefab);
+        if (equipPrefab == null) return;
+
+        // Xóa vũ khí cũ
+        if (currentWeapon != null)
+            Destroy(currentWeapon);
+
+        // Tạo vũ khí mới
+        currentWeapon = Instantiate(equipPrefab, weaponPoint);
+        currentWeapon.transform.localPosition = Vector3.zero;
+        currentWeapon.transform.localRotation = Quaternion.identity;
+    }
+    public void HandleUnequipment()
+    {
+        if (currentWeapon != null)
+        {
+            Destroy(currentWeapon);
+            currentWeapon = null;
+        }
+    }
 }

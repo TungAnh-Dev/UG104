@@ -3,13 +3,15 @@ using UnityEngine;
 
 public abstract class ItemBase : ScriptableObject
 {
-    public int ID;
+    public string ID;
     public string ItemName;
     public ItemCategory Category;
     public Rarity Rarity;
     public Sprite Icon;
     public int maxStack = 99;
     public string Description;
+
+    public GameObject itemPrefab;
 
     public List<StatEntry> Stats;
 
