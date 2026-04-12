@@ -21,8 +21,11 @@ public class StatsComponent : MonoBehaviour
         if(data == null)
         {
             Debug.LogWarning($"{gameObject.name} chua gan Data");
+            return;
         }
-        baseStats = data.GetBaseStats();
+        //Copy tu SO vao Dictionary de su dung runtime
+        var originalStats = data.GetBaseStats();
+        baseStats = new Dictionary<StatsType, float>(originalStats);
     }
     //Modifier
     public void AddModifier(StatsModifier modifier)
@@ -32,6 +35,16 @@ public class StatsComponent : MonoBehaviour
     public void RemoveModifier(StatsModifier modifier)
     {
         modifiersList.Remove(modifier);
+    }
+    public void RemoveAllModifiersFromSource(Object source)
+    {
+        for (int i = modifiersList.Count - 1; i >= 0; i--)
+        {
+            if (modifiersList[i].Source == source)
+            {
+                modifiersList.RemoveAt(i);
+            }
+        }
     }
     public float CalculateFinalStat(StatsType statType, float baseValue)
     {

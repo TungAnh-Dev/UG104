@@ -26,6 +26,12 @@ using UnityEngine;
         Equipment,
         Consumable,
 
-}
+    }
+    public enum WeaponType
+    {
+        Sword,
+        Axe,
+        Hammer
+    }
 
 

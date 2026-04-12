@@ -21,6 +21,6 @@ MonoBehaviour:
   Description: 
   itemPrefab: {fileID: 144458, guid: 7255a8ba7a010714da223f75b44d655d, type: 3}
   Stats:
-  - statType: 0
+  - statType: 1
     value: 250
   EquipType: 0
