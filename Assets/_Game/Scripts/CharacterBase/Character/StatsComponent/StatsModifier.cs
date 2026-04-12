@@ -8,13 +8,16 @@ public class StatsModifier
     public float Value { get; private set; }
     //Kieu cong them vao thuoc tinh: phan tram hay la gia tri
     public ModifierType Type { get; private set; }
+    // Biến xác định nguồn gốc của modifier
+    public Object Source { get; private set; }
 
     //Hàm khởi tạo để modifier thuộc tính cụ thể
-    public StatsModifier(StatsType statType, float value, ModifierType type)
+    public StatsModifier(StatsType statType, float value, ModifierType type, Object source = null)
     {
         StatType = statType;
         Value = value;
         Type = type;
+        Source = source;
     }
 
     //Cho phep thay doi value thong qua ham;

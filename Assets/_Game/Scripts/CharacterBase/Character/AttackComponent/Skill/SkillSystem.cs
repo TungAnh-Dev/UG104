@@ -1,48 +1,66 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
-public class SkillSystem : MonoBehaviour 
+public class SkillSystem : MonoBehaviour
 {
-    //Danh sách skill 
-    [SerializeField]
-    private List<SkillData> skillsList;
-
+    [SerializeField] private SkillButtonUI skillButtonUI;
+    [SerializeField] private Transform skillSpawnPoint;
     private TargetSelector targetSelector;
-
     private AnimationComponent animationComponent;
+    private StatsComponent statsComponent;
+
+    private SkillData currentSkill;
 
     private void Awake()
     {
         animationComponent = GetComponent<AnimationComponent>();
         targetSelector = GetComponent<TargetSelector>();
+        statsComponent = GetComponent<StatsComponent>();
     }
 
-    public void UseSkill(int index)
+    private void Start()
     {
-        if (skillsList == null || skillsList.Count == 0) return;
-        if (index < 0 || index >= skillsList.Count) return;
+        if (skillButtonUI != null)
+            skillButtonUI.Init(this);
+    }
 
-        SkillData skill = skillsList[index];
+    // Khi equip
+    public void SetCurrentSkill(SkillData skillData)
+    {
+        Debug.Log("SetCurrentSkill trên object: " + gameObject.name);
 
-        Debug.Log($"Sử dụng Skill {skill.name}");
+        currentSkill = skillData;
 
-        animationComponent.PlayTrigger(skill.animationTrigger);
-
-        GameObject obj = Instantiate(
-            skill.skillPrefab,
-            transform.position + transform.forward,
-            transform.rotation
-        );
-
-        // Gán hành vi cho đạn
-        BaseSkill behaviour = obj.GetComponent<BaseSkill>();
-        if( behaviour != null)
+        if (skillButtonUI != null)
         {
-            behaviour.Init(skill);
-            Transform target = targetSelector.CurrentTarget;
-            behaviour.SetTarget(target);
+            if (currentSkill != null)
+                skillButtonUI.SetSkill(currentSkill);
+            else
+                skillButtonUI.SetSkill(null);
         }
     }
 
-    
+    public void UseCurrentSkill()
+    {
+        Debug.Log("UseCurrentSkill trên object: " + gameObject.name);
+        if (currentSkill == null)
+        {
+            Debug.Log("Chưa có skill!");
+            return;
+        }
+
+        GameObject obj = Instantiate(
+            currentSkill.skillPrefab,
+            skillSpawnPoint.position,
+            skillSpawnPoint.rotation
+        );
+
+        BaseSkill behaviour = obj.GetComponent<BaseSkill>();
+
+        if (behaviour != null)
+        {
+            behaviour.Init(currentSkill, statsComponent);
+            behaviour.SetTarget(targetSelector?.CurrentTarget);
+            behaviour.Use();
+        }
+    }
 }

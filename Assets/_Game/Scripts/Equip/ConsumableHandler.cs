@@ -4,7 +4,7 @@ public class ConsumableHandler
 {
     public void Apply(
         ConsumableItem item,
-        Dictionary<StatType, int> totalStats,
+        Dictionary<StatsType, int> totalStats,
         HPHandler hpHandler)
     {
         if (item == null || item.Stats == null)
@@ -12,10 +12,10 @@ public class ConsumableHandler
 
         foreach (var effect in item.Stats)
         {
-            if (effect.statType == StatType.HP)
+            if (effect.statType == StatsType.MaxHP)
             {
-                int maxHP = totalStats.ContainsKey(StatType.HP)
-                    ? totalStats[StatType.HP]
+                int maxHP = totalStats.ContainsKey(StatsType.MaxHP)
+                    ? totalStats[StatsType.MaxHP]
                     : 0;
 
                 hpHandler.Heal(effect.value, maxHP);

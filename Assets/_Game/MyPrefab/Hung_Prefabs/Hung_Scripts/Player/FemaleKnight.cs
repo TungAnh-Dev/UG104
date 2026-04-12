@@ -1,14 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class FemaleKnight : CharacterBase
 {
     public static FemaleKnight Instance;
+
     private AnimationComponent animationComponent;
     private SkillSystem skillSystem;
 
-    [SerializeField] private Transform weaponPoint;
+    public Joystick joystick;
 
+    [SerializeField] private Transform weaponPoint;
     private GameObject currentWeapon;
+
+    private Vector3 moveDirection;
 
     public override void Init()
     {
@@ -24,31 +29,43 @@ public class FemaleKnight : CharacterBase
 
     public void Update()
     {
-        HandleMovement();
+        GetInput();
+        MoveCharacter();
+    }
+    void GetInput()
+    {
+        Vector2 keyboard = Vector2.zero;
+
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.wKey.isPressed) keyboard.y += 1;
+            if (Keyboard.current.sKey.isPressed) keyboard.y -= 1;
+            if (Keyboard.current.aKey.isPressed) keyboard.x -= 1;
+            if (Keyboard.current.dKey.isPressed) keyboard.x += 1;
+        }
+
+        Vector2 joystickInput = Vector2.zero;
+
+        if (joystick != null)
+            joystickInput = new Vector2(joystick.Horizontal, joystick.Vertical);
+
+        Vector2 input = keyboard + joystickInput;
+
+        if (input.magnitude > 1)
+            input.Normalize();
+
+        moveDirection = new Vector3(input.x, 0f, input.y);
     }
 
-    public void HandleMovement()
+    // ===== MOVE =====
+    void MoveCharacter()
     {
-        Vector3 direction = Vector3.zero;
-
-        if (Keyboard.current.wKey.isPressed)
-            direction += Vector3.forward;
-
-        if (Keyboard.current.sKey.isPressed)
-            direction += Vector3.back;
-
-        if (Keyboard.current.aKey.isPressed)
-            direction += Vector3.left;
-
-        if (Keyboard.current.dKey.isPressed)
-            direction += Vector3.right;
-
-        if (direction != Vector3.zero)
+        if (moveDirection.magnitude > 0.1f)
         {
-            moveComponent.MoveTo(direction);
+            moveComponent.MoveTo(moveDirection);
             animationComponent.PlayMove();
 
-            transform.rotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.LookRotation(moveDirection);
         }
         else
         {
@@ -60,17 +77,17 @@ public class FemaleKnight : CharacterBase
     public void HandleEquipment(GameObject equipPrefab)
     {
         Debug.Log("Handling equipment change..." + equipPrefab);
+
         if (equipPrefab == null) return;
 
-        // Xóa vũ khí cũ
         if (currentWeapon != null)
             Destroy(currentWeapon);
 
-        // Tạo vũ khí mới
         currentWeapon = Instantiate(equipPrefab, weaponPoint);
         currentWeapon.transform.localPosition = Vector3.zero;
         currentWeapon.transform.localRotation = Quaternion.identity;
     }
+
     public void HandleUnequipment()
     {
         if (currentWeapon != null)

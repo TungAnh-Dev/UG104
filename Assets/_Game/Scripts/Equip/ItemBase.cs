@@ -15,11 +15,10 @@ public abstract class ItemBase : ScriptableObject
 
     public List<StatEntry> Stats;
 
-    public virtual void Use(StatCalculator calculator) { }
 }
 [System.Serializable]
 public class StatEntry
 {
-    public StatType statType;
+    public StatsType statType;
     public int value;
 }
