@@ -11,6 +11,8 @@ public class StatsComponent : MonoBehaviour
     private Dictionary<StatsType, float> baseStats = new Dictionary<StatsType, float>();
     // Modifier runtime
     private List<StatsModifier> modifiersList = new List<StatsModifier>();
+
+    public System.Action OnStatsChanged;
     private void Awake()
     {
         InitBaseStats();
@@ -31,6 +33,7 @@ public class StatsComponent : MonoBehaviour
     public void AddModifier(StatsModifier modifier)
     {
         modifiersList.Add(modifier);
+        OnStatsChanged?.Invoke();
     }
     public void RemoveModifier(StatsModifier modifier)
     {
@@ -45,6 +48,7 @@ public class StatsComponent : MonoBehaviour
                 modifiersList.RemoveAt(i);
             }
         }
+        OnStatsChanged?.Invoke();
     }
     public float CalculateFinalStat(StatsType statType, float baseValue)
     {

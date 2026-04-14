@@ -9,6 +9,8 @@ public class CharacterInformation : MonoBehaviour
     [SerializeField] private TextMeshProUGUI infoText;
     [SerializeField] CharacterStatsData characterStatsData;
     [SerializeField] private StatsComponent statsComponent;
+
+    private HealthComponent healthComponent;
     private void Awake()
     {
         Instance = this;
@@ -22,7 +24,9 @@ public class CharacterInformation : MonoBehaviour
 
         if(statsComponent != null)
         {
-            info += $"Health: {statsComponent.GetStat(StatsType.MaxHP)}\n";
+            float currentHP = healthComponent.GetCurrentHealth();
+            
+            info += $"Health: {currentHP}\n";
             info += $"Attack: {statsComponent.GetStat(StatsType.Attack)}\n";
             info += $"Defense: {statsComponent.GetStat(StatsType.Defense)}\n";
             info += $"Movespeed: {statsComponent.GetStat(StatsType.MoveSpeed)}\n";
@@ -35,8 +39,27 @@ public class CharacterInformation : MonoBehaviour
         infoText.text = info;
     }
 
-    private void Start()
+    private void Update()
     {
-            UpdateUI();
+        if (FemaleKnight.Instance != null)
+        {
+            statsComponent = FemaleKnight.Instance.GetComponent<StatsComponent>();
+            healthComponent = FemaleKnight.Instance.GetComponent<HealthComponent>();
+
+            if (statsComponent != null)
+                statsComponent.OnStatsChanged += UpdateUI;
+
+            if (healthComponent != null)
+                healthComponent.OnHealthChanged += UpdateUI;
+        }
+
+        UpdateUI();
+    }
+    private void OnDisable()
+    {
+        if (statsComponent != null)
+            statsComponent.OnStatsChanged -= UpdateUI;
+        if (healthComponent != null)
+            healthComponent.OnHealthChanged -= UpdateUI;
     }
 }
