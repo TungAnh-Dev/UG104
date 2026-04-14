@@ -9,7 +9,7 @@ public class FemaleKnight : CharacterBase
     private SkillSystem skillSystem;
 
     public Joystick joystick;
-
+    [SerializeField] private Transform cameraTransform;
     [SerializeField] private Transform weaponPoint;
     private GameObject currentWeapon;
 
@@ -31,6 +31,7 @@ public class FemaleKnight : CharacterBase
     {
         GetInput();
         MoveCharacter();
+        TestTakeDamage();
     }
     void GetInput()
     {
@@ -62,10 +63,34 @@ public class FemaleKnight : CharacterBase
     {
         if (moveDirection.magnitude > 0.1f)
         {
-            moveComponent.MoveTo(moveDirection);
+            // Lấy hướng camera (bỏ Y để không bị nghiêng)
+            Vector3 camForward = cameraTransform.forward;
+            Vector3 camRight = cameraTransform.right;
+
+            camForward.y = 0;
+            camRight.y = 0;
+
+            camForward.Normalize();
+            camRight.Normalize();
+
+            // Tính hướng di chuyển theo camera
+            Vector3 move = camForward * moveDirection.z +
+                           camRight * moveDirection.x;
+
+            move.Normalize();
+
+            // Di chuyển
+            moveComponent.MoveTo(move);
             animationComponent.PlayMove();
 
-            transform.rotation = Quaternion.LookRotation(moveDirection);
+            // Xoay mượt theo hướng di chuyển
+            Quaternion targetRotation = Quaternion.LookRotation(move);
+
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                100f * Time.deltaTime
+            );
         }
         else
         {
@@ -94,6 +119,14 @@ public class FemaleKnight : CharacterBase
         {
             Destroy(currentWeapon);
             currentWeapon = null;
+        }
+    }
+
+    private void TestTakeDamage()
+    {
+        if(Keyboard.current.lKey.wasPressedThisFrame)
+        {
+            GetComponent<HealthComponent>().TakeDamage(10);
         }
     }
 }

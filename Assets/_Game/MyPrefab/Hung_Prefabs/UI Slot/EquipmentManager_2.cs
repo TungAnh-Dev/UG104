@@ -78,6 +78,7 @@ public class EquipmentManager_2 : MonoBehaviour
             return;
 
         ItemBase item = equippedItems[type];
+        playerStats.RemoveAllModifiersFromSource(item);
 
         equippedItems.Remove(type);
 
@@ -92,6 +93,7 @@ public class EquipmentManager_2 : MonoBehaviour
             skillSystem.SetCurrentSkill(null);
         }
         Debug.Log($"Unequipped: {item.name}");
+        CharacterInformation.Instance.UpdateUI();
     }
 
     // Kiểm tra item đã được trang bị chưa

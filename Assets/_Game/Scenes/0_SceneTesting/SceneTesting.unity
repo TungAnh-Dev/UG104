@@ -1019,6 +1019,7 @@ GameObject:
   - component: {fileID: 477835667}
   - component: {fileID: 477835666}
   - component: {fileID: 477835669}
+  - component: {fileID: 477835670}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1144,6 +1145,22 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &477835670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 477835665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3a3e68c3ab13f94c8b660abdd5fc8b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CamFollow
+  target: {fileID: 838051677}
+  distance: 6
+  height: 3
+  mouseSensitivity: 150
 --- !u!1 &485123124
 GameObject:
   m_ObjectHideFlags: 0
@@ -2287,6 +2304,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d4008c9e4de95f45976cf7a98205b1e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 838051678}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d4008c9e4de95f45976cf7a98205b1e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 838051679}
   m_SourcePrefab: {fileID: 100100000, guid: 2d4008c9e4de95f45976cf7a98205b1e, type: 3}
 --- !u!1 &838051663 stripped
 GameObject:
@@ -2306,6 +2326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FemaleKnight
   joystick: {fileID: 691013695}
+  cameraTransform: {fileID: 477835668}
   weaponPoint: {fileID: 1098547939}
 --- !u!114 &838051665
 MonoBehaviour:
@@ -2486,6 +2507,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1.17, z: 0}
+--- !u!114 &838051679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 838051663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7181430ed12cc240b7fac091f6f35ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TargetComponent
 --- !u!1 &846638163 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2929252283123773939, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
