@@ -46,14 +46,14 @@ public class HealthComponent : MonoBehaviour
         if (CurrentHP <= 0) return;
 
         damage = Mathf.Max(0, damage);
-        OnHealthChanged?.Invoke();
+        
         //Khi nhân vật nhận damage
         CurrentHP -= damage;
         //Hp sẽ được giới hạn 
         CurrentHP = Mathf.Clamp(CurrentHP, 0,GetMaxHP());
 
         Debug.Log($"{gameObject.name} còn {CurrentHP}/{GetMaxHP()} HP");
-
+        OnHealthChanged?.Invoke();
         StartCoroutine(HitEffect());
 
         if (CurrentHP == 0) 
